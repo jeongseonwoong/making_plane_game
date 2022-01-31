@@ -14,3 +14,4 @@ void myplane_1(int);
 void Enemy_plane_1();
 void gotoxy(int,int);
 void item(int,int,int,int*);
+void KillEnemy(int,int,int,int);
