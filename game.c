@@ -48,6 +48,7 @@ int game()
 	while (TRUE)
 	{
 		movement(x,y,upgrade,count);
+		KillEnemy(x,y,upgrade,count);
 		item(count,x,y,&upgrade);
 		CreateEnemy(count);
 		rates(count,refreshRate);
