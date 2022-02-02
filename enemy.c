@@ -11,7 +11,7 @@ int E_Bullet_Num;
 
 struct enemy
 {
-	int x, y, HP;
+	int x, y, HP,upgrade;
 	struct Enemy_bullet Bullet_info[50];
 };
 typedef struct enemy ENEMY;
@@ -133,22 +133,25 @@ void PrintMyBullet(int My_x, int My_y,int i)
 			}
 			gotoxy(Bullet_info_2[x].x, Bullet_info_2[x].y);
 			printf("o");
-		}
-		for (en_y = 0; en_y < Enemy_Num; en_y++)
-		{
-			if (Bullet_info_2[x].x == Enemy_info[en_y].x || Bullet_info_2[x].x == Enemy_info[en_y].x + 1)
+
+			for (en_y = 0; en_y < Enemy_Num; en_y++)
 			{
-				if (Bullet_info_2[x].y == Enemy_info[en_y].y)
+				if (Bullet_info_2[x].x == Enemy_info[en_y].x || Bullet_info_2[x].x == Enemy_info[en_y].x + 1)
 				{
-					Enemy_info[en_y].HP = Enemy_info[en_y].HP - Bullet_info_2[x].pw;
+					if (Bullet_info_2[x].y == Enemy_info[en_y].y)
+					{
+						Enemy_info[en_y].HP = Enemy_info[en_y].HP - Bullet_info_2[x].pw;
+						Elem_My_Bullet(x);
+						Elem_My_Bullet(x);
+					}
 				}
-			}
-			if (Enemy_info[en_y].HP <= 0)
-			{
-				gotoxy(Enemy_info[en_y].x, Enemy_info[en_y].y);
-				printf("  ");
-				Enemy_info[en_y].x = NULL;
-				Enemy_info[en_y].y = NULL;
+				if (Enemy_info[en_y].HP <= 0)
+				{
+					gotoxy(Enemy_info[en_y].x, Enemy_info[en_y].y);
+					printf("  ");
+					Enemy_info[en_y].x = NULL;
+					Enemy_info[en_y].y = NULL;
+				}
 			}
 		}
 	}
@@ -208,54 +211,119 @@ void PrintEnemy()
 		if (Enemy_info[i].x != NULL && Enemy_info[i].y != NULL)
 		{
 			gotoxy(Enemy_info[i].x, Enemy_info[i].y);
-			Enemy_plane_1();
+			switch (Enemy_info[i].upgrade)
+			{
+			case 1:
+				Enemy_plane_1(Enemy_info[i].HP);
+				break;
+			case 2:
+				Enemy_plane_2(Enemy_info[i].HP);
+				break;
+			case 3:
+				Enemy_plane_3(Enemy_info[i].HP);
+				break;
+			case 4:
+				Enemy_plane_4(Enemy_info[i].HP);
+				break;
+			}
 		}
 	}
 }
 
-void CreateEnemy(int count)
+int Check_End_Round()
 {
-	int Round=0;
-	int i,j;
-
-	switch (count)
+	int i;
+	for (i = 0; i < Enemy_Num; i++)
 	{
-	case 10:
-		Round = 1;
-		break;
-	case 1000:
-		Round = 2;
-		break;
-	case 3000:
-		Round = 3;
-		break;
-	case 6000:
-		Round = 4;
-		break;
+		if (Enemy_info[i].x != NULL)
+		{
+			return 0;
+		}
 	}
 
-	switch (Round)
+	return 1;
+}
+
+void CreateEnemy(int count)
+{
+	int Round_Start=0,i, j;
+
+	if (count == 10)
 	{
-	case 1:
+		Round_Start = 1;
+	}
+	else if (count >= 800 && count<=2000)
+	{
+		if (Check_End_Round() == 1)
+		{
+			Round_Start = 2;
+		}
+	}
+	else if (count >= 2000&& count<=4000)
+	{
+		if (Check_End_Round() == 1)
+		{
+			Round_Start = 3;
+		}
+	}
+	else if (count >= 4000)
+	{
+		if (Check_End_Round() == 1)
+		{
+			Round_Start = 4;
+		}
+	}
+
+	if (Round_Start == 1)
+	{
 		Enemy_Num = 5;
 		for (i = 0; i < Enemy_Num; i++)
 		{
-			Enemy_info[i].x = 20*i+18;
-			Enemy_info[i].y = -1*(i-2)*(i-2) + 5;
+			Enemy_info[i].x = 20 * i + 18;
+			Enemy_info[i].y = -1 * (i - 2) * (i - 2) + 5;
 			Enemy_info[i].HP = 3;
+			Enemy_info[i].upgrade = 1;
 		}
-		E_Bullet_Num = 4;
+		E_Bullet_Num = 5;
 		for (j = 0; j < Enemy_Num; j++)
 		{
 			for (i = 0; i < E_Bullet_Num; i++)
 			{
 				Enemy_info[j].Bullet_info[i].x = Enemy_info[j].x;
-				Enemy_info[j].Bullet_info[i].y = Enemy_info[j].y+1;
+				Enemy_info[j].Bullet_info[i].y = Enemy_info[j].y + 1;
 				Enemy_info[j].Bullet_info[i].direction = 1 + rand() % 3;
 			}
 		}
-		break;
 	}
+	else if (Round_Start == 2)
+	{
+		Enemy_Num = 7;
+		for (i = 0; i < 5; i++)
+		{
+			Enemy_info[i].x = 20 * i + 18;
+			Enemy_info[i].y = -1 * (i - 2) * (i - 2) + 5;
+			Enemy_info[i].HP = 3;
+			Enemy_info[i].upgrade = 1;
+		}
+		for (i = 5; i < 7; i++)
+		{
+			Enemy_info[i].x = 61 * i - 277;
+			Enemy_info[i].y = 2;
+			Enemy_info[i].HP = 7;
+			Enemy_info[i].upgrade = 2;
+		}
+		E_Bullet_Num = 7;
+		for (j = 0; j < Enemy_Num; j++)
+		{
+			for (i = 0; i < E_Bullet_Num; i++)
+			{
+				Enemy_info[j].Bullet_info[i].x = Enemy_info[j].x;
+				Enemy_info[j].Bullet_info[i].y = Enemy_info[j].y + 1;
+				Enemy_info[j].Bullet_info[i].direction = 1 + rand() % 3;
+			}
+		}
+	}
+
 	PrintEnemy();
 	PrintBullet(Enemy_Num,E_Bullet_Num);
 }
