@@ -3,22 +3,38 @@ void myplane_1(int upgrade)
 {
 	if (upgrade == 0)
 	{
-		printf("△");
+		printf("ㅅ");
 	}
 	if (upgrade == 1)
 	{
-		printf("▲");
+		printf("△");
 	}
 	if (upgrade == 2)
 	{
-		printf("○");
+		printf("▲");
 	}
 	if (upgrade >= 3)
 	{
-		printf("●");
+		printf("◈");
 	}
 }
-void Enemy_plane_1()
+
+void Enemy_plane_1(int HP)
+{
+	printf("▽");
+}
+
+void Enemy_plane_2(int HP)
 {
 	printf("▼");
+}
+
+void Enemy_plane_3(int HP)
+{
+	printf("♡");
+}
+
+void Enemy_plane_4(int HP)
+{
+	printf("♥");
 }
