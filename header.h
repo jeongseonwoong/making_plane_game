@@ -9,6 +9,7 @@
 #define DOWN 80
 int main();
 int game();
+int StartPoint();
 void CreateEnemy(int);
 void myplane_1(int);
 void Enemy_plane_1(int);
