@@ -57,22 +57,40 @@ void MoveBullet(int* px, int* py, int dir)
 
 void Elem_Bullet(int Elem_Enemy_Num, int Elem_Bullet_Num)
 {
-	gotoxy(Enemy_info[Elem_Enemy_Num].Bullet_info[Elem_Bullet_Num].x, Enemy_info[Elem_Enemy_Num].Bullet_info[Elem_Bullet_Num].y);
-	printf(" ");
 	Enemy_info[Elem_Enemy_Num].Bullet_info[Elem_Bullet_Num].x = Enemy_info[Elem_Enemy_Num].x;
 	Enemy_info[Elem_Enemy_Num].Bullet_info[Elem_Bullet_Num].y = Enemy_info[Elem_Enemy_Num].y + 1;
 }
 
 void Elem_My_Bullet(int Elem_Bullet_Num)
 {
-	gotoxy(Bullet_info_2[Elem_Bullet_Num].x, Bullet_info_2[Elem_Bullet_Num].y);
-	printf(" ");
 	Bullet_info_2[Elem_Bullet_Num].x = NULL;
 	Bullet_info_2[Elem_Bullet_Num].y = NULL;
-
 }
 
-void PrintBullet(int Enemy_Num, int Bullet_Num)
+int MyHp(int My_x,int My_y,int upgrade, int *My_Plane_HP)
+{
+	int i, j;
+	for (j = 0; j < Enemy_Num; j++)
+	{
+		for (i = 0; i < E_Bullet_Num; i++)
+		{
+			if (Enemy_info[j].Bullet_info[i].x == My_x || Enemy_info[j].Bullet_info[i].x == My_x + 1)
+			{
+				if (Enemy_info[j].Bullet_info[i].y == My_y)
+				{
+					*My_Plane_HP = *My_Plane_HP - Enemy_info[j].Bullet_info[i].pw;
+				}
+			}
+		}
+	}
+	if (*My_Plane_HP == 0)
+	{
+		return 0;
+	}
+	else return 1;
+}
+
+void PrintBullet(int Enemy_Num, int Bullet_Num,int My_x,int My_y)
 {
 	int i, j;
 	for (j = 0; j < Enemy_Num; j++)
@@ -82,16 +100,31 @@ void PrintBullet(int Enemy_Num, int Bullet_Num)
 			if (Enemy_info[j].Bullet_info[i].x != NULL && Enemy_info[j].Bullet_info[i].y != NULL)
 			{
 				gotoxy(Enemy_info[j].Bullet_info[i].x, Enemy_info[j].Bullet_info[i].y);
-				printf(" ");
+				printf("  ");
 				MoveBullet(&Enemy_info[j].Bullet_info[i].x, &Enemy_info[j].Bullet_info[i].y, Enemy_info[j].Bullet_info[i].direction);
-				if (Enemy_info[j].Bullet_info[i].x < 0 || Enemy_info[j].Bullet_info[i].x>116|| Enemy_info[j].Bullet_info[i].y < 0 || Enemy_info[j].Bullet_info[i].y > 28)
+				if (Enemy_info[j].Bullet_info[i].x < 0 || Enemy_info[j].Bullet_info[i].x>116)
 				{
 					if (Enemy_info[j].x == NULL && Enemy_info[j].y == NULL)
 					{
 						Enemy_info[j].Bullet_info[i].x = NULL;
 						Enemy_info[j].Bullet_info[i].y = NULL;
+						continue;
 					}
-					else {
+					else
+					{
+						Elem_Bullet(j, i);
+					}
+				}
+				else if (Enemy_info[j].Bullet_info[i].y < 0 || Enemy_info[j].Bullet_info[i].y > 28)
+				{
+					if (Enemy_info[j].x == NULL && Enemy_info[j].y == NULL)
+					{
+						Enemy_info[j].Bullet_info[i].x = NULL;
+						Enemy_info[j].Bullet_info[i].y = NULL;
+						continue;
+					}
+					else
+					{
 						Elem_Bullet(j, i);
 					}
 				}
@@ -152,7 +185,7 @@ void MyBullet(int My_x, int My_y, int upgrade, int count)
 	switch (upgrade)
 	{
 	case 0:
-		M_Bullet_Num = 10;
+		M_Bullet_Num = 5;
 		if (count % 18 == 0)
 		{
 			Bullet_info_2[i_1].pw = 1;
@@ -164,7 +197,7 @@ void MyBullet(int My_x, int My_y, int upgrade, int count)
 		PrintMyBullet(My_x, My_y, i_1);
 		break;
 	case 1:
-		M_Bullet_Num = 20;
+		M_Bullet_Num = 10;
 		if (count % 15 == 0)
 		{
 			Bullet_info_2[i_2].pw = 2;
@@ -176,7 +209,7 @@ void MyBullet(int My_x, int My_y, int upgrade, int count)
 		PrintMyBullet(My_x, My_y, i_2);
 		break;
 	case 2:
-		M_Bullet_Num = 30;
+		M_Bullet_Num = 10;
 		if (count % 10 == 0)
 		{
 			Bullet_info_2[i_3].pw = 3;
@@ -202,16 +235,16 @@ void PrintEnemy()
 			switch (Enemy_info[i].upgrade)
 			{
 			case 1:
-				Enemy_plane_1(Enemy_info[i].HP);
+				printf("▽ HP:%d", Enemy_info[i].HP);
 				break;
 			case 2:
-				Enemy_plane_2(Enemy_info[i].HP);
+				printf("▼ HP:%d", Enemy_info[i].HP);
 				break;
 			case 3:
-				Enemy_plane_3(Enemy_info[i].HP);
+				printf("♡ HP:%d", Enemy_info[i].HP);
 				break;
 			case 4:
-				Enemy_plane_4(Enemy_info[i].HP);
+				printf("♥ HP:%d", Enemy_info[i].HP);
 				break;
 			}
 		}
@@ -219,7 +252,7 @@ void PrintEnemy()
 }
 
 
-void CreateEnemy(int count)
+void CreateEnemy(int My_x,int My_y, int count)
 {
 	int Round_Start = 0, i, j;
 
@@ -229,6 +262,7 @@ void CreateEnemy(int count)
 	}
 	else if (count==800)
 	{
+
 		Round_Start = 2;
 	}
 	else if (count == 2000)
@@ -250,19 +284,21 @@ void CreateEnemy(int count)
 			Enemy_info[i].HP = 3;
 			Enemy_info[i].upgrade = 1;
 		}
-		E_Bullet_Num = 4;
+		E_Bullet_Num = 3;
 		for (j = 0; j < Enemy_Num; j++)
 		{
 			for (i = 0; i < E_Bullet_Num; i++)
 			{
 				Enemy_info[j].Bullet_info[i].x = Enemy_info[j].x;
 				Enemy_info[j].Bullet_info[i].y = Enemy_info[j].y + 1;
-				Enemy_info[j].Bullet_info[i].direction = 1 + rand() % 3;
+				Enemy_info[j].Bullet_info[i].direction = 3-i;
+				Enemy_info[j].Bullet_info[i].pw = 1;
 			}
 		}
 	}
 	else if (Round_Start == 2)
 	{
+		system("cls");
 		Enemy_Num = 7;
 		for (i = 0; i < 5; i++)
 		{
@@ -278,17 +314,26 @@ void CreateEnemy(int count)
 			Enemy_info[i].HP = 7;
 			Enemy_info[i].upgrade = 2;
 		}
-		E_Bullet_Num = 4;
+		E_Bullet_Num = 3;
 		for (j = 0; j < Enemy_Num; j++)
 		{
 			for (i = 0; i < E_Bullet_Num; i++)
 			{
 				Enemy_info[j].Bullet_info[i].x = Enemy_info[j].x;
 				Enemy_info[j].Bullet_info[i].y = Enemy_info[j].y + 1;
-				Enemy_info[j].Bullet_info[i].direction = 1 + rand() % 3;
+				Enemy_info[j].Bullet_info[i].direction = 3-i;
+				if (Enemy_info[j].upgrade == 1)
+				{
+					Enemy_info[j].Bullet_info[i].pw = 1;
+				}
+				else if (Enemy_info[j].upgrade == 2)
+				{
+					Enemy_info[j].Bullet_info[i].pw = 2;
+				}
 			}
 		}
 	}
 	PrintEnemy();
-	PrintBullet(Enemy_Num, E_Bullet_Num);
+	PrintBullet(Enemy_Num, E_Bullet_Num, My_x, My_y);
+
 }
