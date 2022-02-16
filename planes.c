@@ -18,23 +18,3 @@ void myplane_1(int upgrade)
 		printf("◈");
 	}
 }
-
-void Enemy_plane_1(int HP)
-{
-	printf("▽ HP:%d",HP);
-}
-
-void Enemy_plane_2(int HP)
-{
-	printf("▼ HP:%d",HP);
-}
-
-void Enemy_plane_3(int HP)
-{
-	printf("♡ HP:%d",HP);
-}
-
-void Enemy_plane_4(int HP)
-{
-	printf("♥ HP:%d",HP);
-}
