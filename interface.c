@@ -19,11 +19,11 @@ int StartPoint()
 		key = _getch();
 		gotoxy(x, y);
 		printf("  ");
-		if (key == 72)
+		if (key == 72&&y>15)
 		{
 			y--;
 		}
-		else if (key == 80)
+		else if (key == 80&&y<17)
 		{
 			y++;
 		}
@@ -40,10 +40,12 @@ int StartPoint()
 	}
 	else if (y == 16)
 	{
+		system("cls");
 		return 0;
 	}
 	else if (y == 17)
 	{
+		system("cls");
 		return 2;
 	}
 	return 1;
